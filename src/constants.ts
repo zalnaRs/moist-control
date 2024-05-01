@@ -13,3 +13,6 @@ export const stepsToKM = (steps: number) =>
   Number((steps / 1312.33595801).toPrecision(2));
 export const celiusToFahrenheit = (celsius: number) => (celsius - 32) * 0.5556;
 export const kmToMiles = (km: number) => km * 0.62137119;
+
+export const normalise = (value, MIN, MAX) =>
+  ((value - MIN) * 100) / (MAX - MIN);

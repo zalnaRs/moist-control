@@ -17,10 +17,25 @@ import Stack from '@suid/material/Stack';
 import TextField from '@suid/material/TextField';
 import { Component, For } from 'solid-js';
 import { theme } from '../App';
-import { celiusToFahrenheit, kmToMiles, stepsToKM } from '../constants';
+import {
+  celiusToFahrenheit,
+  kmToMiles,
+  normalise,
+  stepsToKM,
+} from '../constants';
 import DeviceProvider from '../contexts/DeviceProvider';
 import { device, syncOptions } from '../lib/bluetooth';
 import { data } from '../lib/store';
+import { Alert, AlertTitle, LinearProgress } from '@suid/material';
+
+const check = () => {
+  return !(
+    data.moist < 900 ||
+    data.light < 200 ||
+    data.temp < 18 ||
+    data.temp >= 50
+  );
+};
 
 const Home: Component = () => {
   return (
@@ -64,6 +79,37 @@ const Home: Component = () => {
               <ListItemText primary="Connected" secondary={device?.name} />
             </ListItem>
 
+            {data.moist < 900 && (
+              <Alert severity="warning" sx={{ margin: 1 }}>
+                <AlertTitle>Low moisture!</AlertTitle>
+                Water the soil!
+              </Alert>
+            )}
+            {data.light < 200 && (
+              <Alert severity="warning" sx={{ margin: 1 }}>
+                <AlertTitle>Not enough light!</AlertTitle>
+                Remove shades, if needed!
+              </Alert>
+            )}
+            {data.temp < 18 && (
+              <Alert severity="warning" sx={{ margin: 1 }}>
+                <AlertTitle>Not enough temperature!</AlertTitle>
+                Ensure proper temperature for your ambient air!
+              </Alert>
+            )}
+            {data.temp >= 50 && (
+              <Alert severity="warning" sx={{ margin: 1 }}>
+                <AlertTitle>Too hot temperature!</AlertTitle>
+                For the safety of the micro:bit, please remove it!
+              </Alert>
+            )}
+            {check() && (
+              <Alert severity="success" sx={{ margin: 1 }}>
+                <AlertTitle>Everything is alright!</AlertTitle>
+                Your soil, ambient air, and environment are excellent!
+              </Alert>
+            )}
+
             <Divider />
             <ListSubheader component={'div'}>Statistics</ListSubheader>
             <ListItem disablePadding>
@@ -71,11 +117,27 @@ const Home: Component = () => {
                 <ListItemIcon>
                   <Water />
                 </ListItemIcon>
-                <ListItemText>
-                  <div>
-                    <b>{data.moist}</b> {' moist (0 dry-1023 moist)'}
-                  </div>
-                </ListItemText>
+                <ListItemText
+                  primary={
+                    <div>
+                      <b>{data.moist}</b> moist
+                    </div>
+                  }
+                  secondary={
+                    <LinearProgress
+                      variant="determinate"
+                      value={normalise(data.moist, 0, 1023)}
+                      sx={{ height: 14 }}
+                      color={
+                        data.moist <= 600
+                          ? 'error'
+                          : data.moist >= 900
+                          ? 'success'
+                          : 'warning'
+                      }
+                    />
+                  }
+                />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
@@ -83,11 +145,27 @@ const Home: Component = () => {
                 <ListItemIcon>
                   <WbSunny />
                 </ListItemIcon>
-                <ListItemText>
-                  <div>
-                    <b>{data.light}</b> {'(0 dark-255 light)'}
-                  </div>
-                </ListItemText>
+                <ListItemText
+                  primary={
+                    <div>
+                      <b>{data.light}</b> light
+                    </div>
+                  }
+                  secondary={
+                    <LinearProgress
+                      variant="determinate"
+                      value={normalise(data.light, 0, 255)}
+                      sx={{ height: 14 }}
+                      color={
+                        data.light <= 200
+                          ? 'error'
+                          : data.light >= 210
+                          ? 'success'
+                          : 'warning'
+                      }
+                    />
+                  }
+                />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
@@ -95,22 +173,39 @@ const Home: Component = () => {
                 <ListItemIcon>
                   <DeviceThermostat />
                 </ListItemIcon>
-                <ListItemText>
-                  <b>
-                    {data.temp}
-                    <sup>℃</sup>
-                  </b>
-                  (
-                  <b>
-                    {celiusToFahrenheit(data.temp)}
-                    <sup>℉</sup>
-                  </b>
-                  ){' current temperature'}
-                </ListItemText>
+                <ListItemText
+                  primary={
+                    <div>
+                      <b>
+                        {data.temp}
+                        <sup>℃</sup>
+                      </b>
+                      (
+                      <b>
+                        {celiusToFahrenheit(data.temp)}
+                        <sup>℉</sup>
+                      </b>
+                      ){' current temperature'}
+                    </div>
+                  }
+                  secondary={
+                    <LinearProgress
+                      variant="determinate"
+                      value={normalise(data.moist, 0, 1023)}
+                      sx={{ height: 14 }}
+                      color={
+                        data.temp < 18
+                          ? 'error'
+                          : data.temp >= 50
+                          ? 'warning'
+                          : 'success'
+                      }
+                    />
+                  }
+                />
               </ListItemButton>
             </ListItem>
-
-            <Divider />
+            {/* <Divider />
             <ListSubheader component={'div'}>Settings</ListSubheader>
             <ListItem>
               <ListItemText primary="Brightness" />
@@ -123,7 +218,7 @@ const Home: Component = () => {
                   })
                 }
               />
-            </ListItem>
+              </ListItem>*/}
           </List>
         </Box>
       )}
