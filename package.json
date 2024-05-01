@@ -1,0 +1,23 @@
+{
+  "name": "zicrobit-control",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "start": "vite"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.13.2",
+    "@suid/icons-material": "^0.7.0",
+    "@suid/material": "^0.16.0",
+    "solid-js": "^1.8.17"
+  },
+  "devDependencies": {
+    "@suid/vite-plugin": "^0.2.0",
+    "@types/web-bluetooth": "^0.0.20",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "vite-plugin-pwa": "^0.20.0",
+    "vite-plugin-solid": "2.10.2"
+  }
+}
