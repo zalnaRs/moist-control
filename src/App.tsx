@@ -1,4 +1,4 @@
-import { Route, Routes } from '@solidjs/router';
+import { Route, Router } from '@solidjs/router';
 import { createTheme, ThemeProvider } from '@suid/material';
 import CssBaseline from '@suid/material/CssBaseline';
 import { Component, onMount } from 'solid-js';
@@ -14,10 +14,10 @@ const App: Component = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <MainAppBar />
-      <Routes>
+      <Router>
         <Route path="/" component={Home} />
         <Route path="/connect" component={Connect} />
-      </Routes>
+      </Router>
     </ThemeProvider>
   );
 };
